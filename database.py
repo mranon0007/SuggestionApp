@@ -23,6 +23,7 @@ class Db(Singleton):
 
         db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
         db.generate_mapping(create_tables=True)
+        orm.set_sql_debug(True)
 
     @orm.db_session
     def addWord(self, word, lang="Eng"):
@@ -32,16 +33,20 @@ class Db(Singleton):
         return
 
     @orm.db_session
-    def getWordsByQuery(self, query):
-        return
+    def getWordsByQuery(self, query, lang="Eng", limit=10):
+        dictName    = deepgetattr(getattr(sys.modules[__name__], self.__class__.__name__), 'Words'+lang)
+        queryResult = orm.select((c.id, c.word) for c in dictName if(c.word.startswith(query)) )[:limit]
+        return queryResult
 
-    # Models - Each class represents 1 Table(or a dictionary of different languages)
+    '''
+    Models - Each class represents 1 Table(or a dictionary of different languages)
+    Naming Convention For Dictionary: "Words"+Language
+    '''
     class WordsEng(db.Entity):
-        word = orm.Required(str)
+        word = orm.Required(str, unique=True)
 
     class WordsDutch(db.Entity):
-        word = orm.Required(str)
+        word = orm.Required(str, unique=True)
 
     class WordsGerman(db.Entity):
-        word = orm.Required(str)
-
+        word = orm.Required(str, unique=True)

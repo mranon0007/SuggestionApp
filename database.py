@@ -79,6 +79,10 @@ class Db(Singleton):
         # filter empty & duplicate words 
         dictName = deepgetattr(getattr(sys.modules[__name__], self.__class__.__name__), 'Words'+lang)
 
+        # remove words already in db
+        queryResult = set(orm.select(c.word for c in dictName if( c.word in words) )[:])
+        words       = words - (words & queryResult)
+
         for word in words:
             word_ = dictName(word=word)
         

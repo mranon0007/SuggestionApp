@@ -42,15 +42,15 @@ class Db(Singleton):
                 print("Generating Database. It can take a few minutes as the data is around 20 Mb")
                 with codecs.open("resources/wordsEng.txt", 'r', encoding='utf-8', errors='ignore') as outfile:
                     lines = outfile.read().splitlines()
-                    self.addList(lines)
+                    self.addList(lines, check_for_duplicates = False)
 
                 with codecs.open("resources/wordsDutch.txt", 'r', encoding='utf-8', errors='ignore') as outfile:
                     lines = outfile.read().splitlines()
-                    self.addList(lines, lang="Dutch")
+                    self.addList(lines, lang="Dutch", check_for_duplicates = False)
 
                 with codecs.open("resources/wordsGerman.txt", 'r', encoding='utf-8', errors='ignore') as outfile:
                     lines = outfile.read().splitlines()
-                    self.addList(lines, lang="German")
+                    self.addList(lines, lang="German", check_for_duplicates = False)
 
                 print("Generated Database Completely.")
             except:
@@ -73,15 +73,16 @@ class Db(Singleton):
         return
 
     @orm.db_session
-    def addList(self, words, lang="Eng"):
+    def addList(self, words, lang="Eng", check_for_duplicates=True):
         words = set(filter(None, words))
 
         # filter empty & duplicate words 
         dictName = deepgetattr(getattr(sys.modules[__name__], self.__class__.__name__), 'Words'+lang)
 
         # remove words already in db
-        queryResult = set(orm.select(c.word for c in dictName if( c.word in words) )[:])
-        words       = words - (words & queryResult)
+        if check_for_duplicates:
+            queryResult = set(orm.select(c.word for c in dictName if( c.word in words) )[:])
+            words       = words - (words & queryResult)
 
         for word in words:
             word_ = dictName(word=word)

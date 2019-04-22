@@ -1,9 +1,9 @@
-# Intech Test
+# Intech Test (by Yousuf Khan yusufkhanjee@gmail.com)
 This is a simple system to autocomplete words and sentences.  
 
 The App can be used throught the SuggestionApp python class, WebSocket API or a web based front-end app.    
 
-SQLite database was used for storage purpose.
+SQLite database was used for storage purpose.  
 
 # Installation
 

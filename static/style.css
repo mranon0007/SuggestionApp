@@ -1,0 +1,9 @@
+#suggestionList{
+    display: none;
+    max-height: 250px;
+    overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
+}
+#searchQuery:focus + #suggestionList {
+    display: block;
+}

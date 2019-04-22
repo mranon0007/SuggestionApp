@@ -94,6 +94,8 @@ class Db(Singleton):
     @orm.db_session
     # returns [ (id,word),... ]
     def getWordsByQuery(self, query, lang="Eng", limit=10):
+        if not query: return []
+        limit       = int(limit)
         dictName    = deepgetattr(getattr(sys.modules[__name__], self.__class__.__name__), 'Words'+lang)
         queryResult = orm.select((c.id, c.word) for c in dictName if(c.word.startswith(query)) )[:limit]
         return queryResult

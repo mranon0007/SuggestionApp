@@ -9,8 +9,11 @@ def client_msg_rcvd(client, server, message):
     message = json.loads(message)
     if message['type'] == "autocomplete":
         res = sApp.getSuggestions(message['data']['query'], lang=message['data']['lang'], limit=message['data']['limit'])
-        res = json.dumps(res)
-        server.send_message(client, "echo")
+        res = json.dumps({
+            "msg_id": message['msg_id'],
+            "response": dict(res)
+        })
+        server.send_message(client, res)
     else:
         raise Exception("Incorrect Msg type received")
     return

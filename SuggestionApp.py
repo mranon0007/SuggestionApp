@@ -6,9 +6,9 @@ class SuggestionApp:
         self.db = Db()
 
     # Add the word to database, skip if it already exsists
-    def addToDb(self, word, skip_if_exsists=True):
+    def addToDb(self, word, lang="Eng", skip_if_exsists=True):
         words = self.tokenizeString(word)
-        self.db.addList(words)
+        self.db.addList(words, lang=lang)
         return
 
     # tokenize the string
@@ -17,17 +17,18 @@ class SuggestionApp:
     # filter empty strings
     def tokenizeString(self, string):
         splitString = string.split()
-        if(len(splitString) < 2): return []
-        return filter(None, splitString + [" ".join(splitString[:-1])])
+            
+        if len(string) == len(string.strip()):
+            if(len(splitString) < 2): return []
+            return filter(None, splitString + [" ".join(splitString[:-1])])
+        else:
+            return filter(None, splitString + [" ".join(splitString[:])])
 
     # search for the word in db and return Suggestions
     # Add new words to DB
-    def getSuggestions(self, query):
+    def getSuggestions(self, query, lang="Eng", limit=100):
         # Add new words to DB
         self.addToDb(query)
-        suggestions = self.db.getWordsByQuery(query)
+        suggestions = self.db.getWordsByQuery(query, lang=lang, limit=limit)
         # get words from DB
         return suggestions
-
-app = SuggestionApp()
-print(app.getSuggestions("cri"))
